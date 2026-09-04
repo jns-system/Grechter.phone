@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -100,6 +101,7 @@
             background-size: 400% 400%;
             animation: gradientMove 15s ease infinite;
         }
+
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -191,7 +193,7 @@
 
         <div class="p-5 md:p-6 space-y-6 relative z-20 bg-white/60 rounded-b-[2.5rem] backdrop-blur-sm">
 
-            <!-- 1. The Main QR Code Block -->
+            <!-- 1. The Main QR Code Block (Two-Tone Pink/Blue Gradient with 3D Tilt) -->
             <section class="opacity-0 animate-fade-in-up" style="animation-delay: 100ms;" id="tiltWrapper">
                 <div id="tiltCard" class="relative overflow-hidden w-full p-6 py-7 rounded-[1.5rem] bg-two-tone border-4 border-white shadow-[0_10px_25px_rgba(236,72,153,0.15)] group">
                     
@@ -211,14 +213,14 @@
                         <!-- QR Code Image -->
                         <div class="my-4 w-full flex justify-center" style="transform: translateZ(30px);">
                             <div class="relative w-[200px] h-[200px] bg-white rounded-2xl border-[4px] border-white shadow-md flex items-center justify-center overflow-hidden">
+                                <!-- รูปภาพ QR Code จากลิงก์ตรงของคุณ -->
                                 <img src="https://img2.pic.in.th/S__11141194.jpg" alt="QR Code Payment" class="w-full h-full object-contain">
                             </div>
                         </div>
                         
                         <!-- Download Button -->
                         <div class="flex flex-col gap-2.5 w-full mt-2" style="pointer-events: auto; transform: translateZ(40px);">
-                            <!-- เพิ่มการส่งลิงก์ URL เข้าไปในฟังก์ชันด้วย -->
-                            <button onclick="downloadAction(event, 'https://img2.pic.in.th/S__11141194.jpg', this)" class="btn-squish flex items-center justify-center gap-2 w-full max-w-[240px] mx-auto bg-gradient-to-r from-pink-300 to-sky-300 hover:from-pink-400 hover:to-sky-400 text-white border-[3px] border-white py-3.5 rounded-2xl text-[15px] font-bold transition-all shadow-md">
+                            <button onclick="downloadAction(event, this)" class="btn-squish flex items-center justify-center gap-2 w-full max-w-[240px] mx-auto bg-gradient-to-r from-pink-300 to-sky-300 hover:from-pink-400 hover:to-sky-400 text-white border-[3px] border-white py-3.5 rounded-2xl text-[15px] font-bold transition-all shadow-md">
                                 <i data-lucide="download" class="w-5 h-5"></i>
                                 บันทึกรูป QR Code
                             </button>
@@ -280,7 +282,6 @@
 
                 </div>
             </section>
-
         </div>
     </main>
 
@@ -397,7 +398,7 @@
         }
 
         // Action for Download Button
-        async function downloadAction(event, imageUrl, btnElement) {
+        function downloadAction(event, btnElement) {
             // Spawn Confetti
             const clickX = event.clientX || event.touches?.[0].clientX || window.innerWidth / 2;
             const clickY = event.clientY || event.touches?.[0].clientY || window.innerHeight / 2;
@@ -405,84 +406,22 @@
 
             // Change Button Visual
             const originalHTML = btnElement.innerHTML;
-            btnElement.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 text-white animate-spin"></i> <span class="text-white">กำลังเตรียมไฟล์...</span>`;
+            btnElement.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> <span class="text-white">บันทึกเรียบร้อย!</span>`;
             
             btnElement.classList.remove('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
-            btnElement.classList.add('bg-blue-400', 'border-blue-400');
+            btnElement.classList.add('bg-green-400', 'border-green-400');
             lucide.createIcons();
 
-            const processSuccess = () => {
-                btnElement.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> <span class="text-white">สำเร็จ!</span>`;
-                btnElement.classList.remove('bg-blue-400', 'border-blue-400');
-                btnElement.classList.add('bg-green-400', 'border-green-400');
+            // Trigger Toast
+            showToast(`บันทึก QR Code สำเร็จ ✨`);
+
+            // Revert Back
+            setTimeout(() => {
+                btnElement.innerHTML = originalHTML;
+                btnElement.classList.remove('bg-green-400', 'border-green-400');
+                btnElement.classList.add('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
                 lucide.createIcons();
-                showToast(`ดำเนินการเรียบร้อย ✨`);
-
-                setTimeout(() => {
-                    btnElement.innerHTML = originalHTML;
-                    btnElement.classList.remove('bg-green-400', 'border-green-400');
-                    btnElement.classList.add('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
-                    lucide.createIcons();
-                }, 2500);
-            };
-
-            const processFallback = () => {
-                window.open(imageUrl, '_blank');
-                btnElement.innerHTML = `<i data-lucide="external-link" class="w-5 h-5 text-white"></i> <span class="text-white">เปิดรูปใหม่</span>`;
-                btnElement.classList.remove('bg-blue-400', 'border-blue-400');
-                btnElement.classList.add('bg-amber-400', 'border-amber-400');
-                lucide.createIcons();
-                showToast(`แตะค้างที่รูปเพื่อบันทึกลงแกลเลอรี่ 👆`);
-                
-                setTimeout(() => {
-                    btnElement.innerHTML = originalHTML;
-                    btnElement.classList.remove('bg-amber-400', 'border-amber-400');
-                    btnElement.classList.add('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
-                    lucide.createIcons();
-                }, 3500);
-            }
-
-            try {
-                // Fetch image as blob (Adding explicitly 'cors' mode)
-                const response = await fetch(imageUrl, { mode: 'cors' });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error!`);
-                }
-                
-                const blob = await response.blob();
-                
-                // Create File object for potential sharing
-                const file = new File([blob], `Grechter-QR-${Date.now()}.jpg`, { type: blob.type });
-
-                // Try Web Share API first (best for mobile saving to gallery)
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Grechter Payment QR',
-                        text: 'คิวอาร์โค้ดสำหรับชำระเงิน Grechter'
-                    });
-                    processSuccess();
-                } else {
-                    // Fallback to traditional download (best for PC or if Share API is unavailable)
-                    const objectUrl = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = objectUrl;
-                    a.download = file.name; 
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    window.URL.revokeObjectURL(objectUrl);
-                    document.body.removeChild(a);
-                    processSuccess();
-                }
-
-            } catch (error) {
-                // Note: Image hosts like pic.in.th often block background downloads (CORS).
-                // When this happens, we silently switch to the fallback method.
-                processFallback();
-            }
+            }, 2000);
         }
 
         // Toast Notification Logic
