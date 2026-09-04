@@ -1,0 +1,445 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>How to pay | Grechter.phone</title>
+    
+    <!-- Google Fonts: Itim -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Itim', 'cursive'],
+                    },
+                    colors: {
+                        'pastel-blue': '#e0f2fe',
+                        'pastel-pink': '#fce7f3',
+                        'pastel-yellow': '#fef9c3',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                        'float-slow': 'float 6s ease-in-out infinite',
+                        'float-medium': 'float 4s ease-in-out infinite reverse',
+                        'wiggle': 'wiggle 2s ease-in-out infinite',
+                        'bounce-sm': 'bounceSm 3s infinite',
+                        'gradient-xy': 'gradientXY 6s ease infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px) scale(0.98)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                            '50%': { transform: 'translateY(-15px) scale(1.05)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        },
+                        bounceSm: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        gradientXY: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Global Settings */
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-weight: 700; /* Bold overall */
+            background-color: #f8fafc;
+        }
+        
+        /* Cute Polka Dot Background */
+        .bg-polka {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -2;
+            background-image: 
+                radial-gradient(#fbcfe8 1.5px, transparent 1.5px), 
+                radial-gradient(#bae6fd 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            opacity: 0.6;
+        }
+
+        /* Glass Panel with Cute Border */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 4px solid #ffffff;
+            box-shadow: 0 15px 35px rgba(251, 207, 232, 0.4), inset 0 0 0 2px rgba(255,255,255,0.5);
+        }
+
+        /* Moving Pastel Gradient */
+        .bg-pan-pastel {
+            background: linear-gradient(-45deg, #fce7f3, #e0f2fe, #fef9c3, #f3e8ff);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Two-tone Card Gradient (Pink & Blue Soft Pastel) */
+        .bg-two-tone {
+            background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 40%, #f0f9ff 100%);
+        }
+
+        /* 3D Tilt Wrapper */
+        #tiltWrapper {
+            perspective: 1000px;
+        }
+        #tiltCard {
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-style: preserve-3d;
+        }
+
+        .btn-squish:active {
+            transform: scale(0.92);
+        }
+
+        /* Bubbles & Confetti */
+        @keyframes floatBubble {
+            0% { transform: translateY(0) scale(0.5); opacity: 0.8; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes popShape {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            50% { transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(var(--rot)); opacity: 1; }
+            100% { transform: translate(var(--tx), calc(var(--ty) + 40px)) scale(0.8) rotate(calc(var(--rot) + 45deg)); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="text-gray-700 min-h-screen flex items-center justify-center p-4 py-10 antialiased relative">
+
+    <!-- 1. Background Pattern -->
+    <div class="bg-polka"></div>
+
+    <!-- 2. Soft Glowing Orbs -->
+    <div class="fixed top-0 left-0 w-64 h-64 bg-pink-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-float-slow pointer-events-none z-[-1]"></div>
+    <div class="fixed bottom-0 right-0 w-72 h-72 bg-blue-200/40 rounded-full mix-blend-multiply filter blur-3xl animate-float-medium pointer-events-none z-[-1]"></div>
+
+    <!-- 3. Floating Cute Decorations (Lucide Icons) -->
+    <div class="fixed top-16 left-6 md:left-20 text-pink-300 animate-bounce-sm z-0 opacity-80 pointer-events-none">
+        <i data-lucide="heart" class="w-8 h-8 fill-pink-200"></i>
+    </div>
+    <div class="fixed bottom-24 left-10 md:left-32 text-yellow-400 animate-float-slow z-0 opacity-70 pointer-events-none">
+        <i data-lucide="star" class="w-10 h-10 fill-yellow-200"></i>
+    </div>
+    <div class="fixed top-32 right-6 md:right-24 text-sky-300 animate-wiggle z-0 opacity-80 pointer-events-none">
+        <i data-lucide="cloud" class="w-12 h-12 fill-sky-100"></i>
+    </div>
+    <div class="fixed bottom-16 right-16 md:right-32 text-purple-300 animate-float-medium z-0 opacity-80 pointer-events-none">
+        <i data-lucide="sparkles" class="w-8 h-8"></i>
+    </div>
+
+    <!-- Main Container -->
+    <main class="max-w-md w-full glass-panel rounded-[2.5rem] overflow-hidden relative opacity-0 animate-fade-in-up z-10">
+        
+        <!-- Header Section -->
+        <header class="bg-pan-pastel text-center py-10 px-4 relative overflow-hidden group border-b-[3px] border-white/60">
+            <!-- Decorative dots inside header -->
+            <div class="absolute inset-0 pointer-events-none">
+                <i data-lucide="sparkle" class="absolute top-5 left-8 w-4 h-4 text-pink-400 animate-pulse" style="animation-delay: 100ms;"></i>
+                <i data-lucide="sparkle" class="absolute top-8 right-10 w-3 h-3 text-blue-400 animate-pulse" style="animation-delay: 300ms;"></i>
+                <i data-lucide="sparkle" class="absolute bottom-5 left-1/3 w-3 h-3 text-yellow-500 animate-pulse" style="animation-delay: 200ms;"></i>
+            </div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="p-3 bg-white/90 rounded-2xl mb-3 shadow-sm border-2 border-white animate-wiggle">
+                    <i data-lucide="shopping-bag" class="w-7 h-7 text-sky-500"></i>
+                </div>
+                
+                <h1 class="text-3xl font-black tracking-widest text-gray-800 drop-shadow-sm uppercase">HOW TO PAY</h1>
+                
+                <div class="flex gap-1.5 my-3">
+                    <div class="w-2 h-2 rounded-full bg-pink-400"></div>
+                    <div class="w-2 h-2 rounded-full bg-sky-400"></div>
+                    <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                </div>
+                
+                <p class="text-[13px] tracking-[0.15em] text-gray-700 bg-white/80 px-5 py-1.5 rounded-full shadow-sm uppercase border-2 border-white/80 backdrop-blur-sm">Grechter.phone</p>
+            </div>
+        </header>
+
+        <div class="p-5 md:p-6 space-y-6 relative z-20 bg-white/60 rounded-b-[2.5rem] backdrop-blur-sm">
+
+            <!-- 1. The Main QR Code Block (Two-Tone Pink/Blue Gradient with 3D Tilt) -->
+            <section class="opacity-0 animate-fade-in-up" style="animation-delay: 100ms;" id="tiltWrapper">
+                <div id="tiltCard" class="relative overflow-hidden w-full p-6 py-7 rounded-[1.5rem] bg-two-tone border-4 border-white shadow-[0_10px_25px_rgba(236,72,153,0.15)] group">
+                    
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-sky-100/50 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+                    <div class="absolute -left-10 -top-10 w-32 h-32 bg-pink-100/50 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-500 pointer-events-none"></div>
+
+                    <div class="relative z-10 flex flex-col items-center text-center space-y-1.5 pointer-events-none">
+                        
+                        <!-- Account Name -->
+                        <div style="transform: translateZ(15px);" class="mb-1">
+                            <p class="text-[16px] tracking-wide drop-shadow-sm">
+                                <span class="text-gray-900 font-black">ชื่อบัญชี</span> 
+                                <span class="text-pink-500 font-black ml-1">บจก.เกรชเตอร์ ริช กรุ๊ป</span>
+                            </p>
+                        </div>
+
+                        <!-- QR Code Image -->
+                        <div class="my-4 w-full flex justify-center" style="transform: translateZ(30px);">
+                            <div class="relative w-[200px] h-[200px] bg-white rounded-2xl border-[4px] border-white shadow-md flex items-center justify-center overflow-hidden">
+                                <!-- รูปภาพ QR Code จากลิงก์ตรงของคุณ -->
+                                <img src="https://img2.pic.in.th/S__11141194.jpg" alt="QR Code Payment" class="w-full h-full object-contain">
+                            </div>
+                        </div>
+                        
+                        <!-- Download Button -->
+                        <div class="flex flex-col gap-2.5 w-full mt-2" style="pointer-events: auto; transform: translateZ(40px);">
+                            <button onclick="downloadAction(event, this)" class="btn-squish flex items-center justify-center gap-2 w-full max-w-[240px] mx-auto bg-gradient-to-r from-pink-300 to-sky-300 hover:from-pink-400 hover:to-sky-400 text-white border-[3px] border-white py-3.5 rounded-2xl text-[15px] font-bold transition-all shadow-md">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                บันทึกรูป QR Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 2. Cute Notes Section -->
+            <section class="opacity-0 animate-fade-in-up" style="animation-delay: 200ms;">
+                
+                <h3 class="text-[14px] font-bold text-gray-600 mb-4 flex items-center gap-2 uppercase tracking-wider ml-2">
+                    <i data-lucide="bell-ring" class="w-5 h-5 text-yellow-500 animate-wiggle"></i>
+                    ข้อแนะนำก่อนทำรายการ
+                </h3>
+
+                <div class="space-y-3.5">
+                    
+                    <!-- Rule 1: Verify Account -->
+                    <div class="flex items-center gap-3 bg-white p-3.5 rounded-[1.2rem] border-2 border-blue-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex-shrink-0 w-11 h-11 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 border border-blue-100 relative z-10">
+                            <i data-lucide="search-check" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-1 min-w-0 relative z-10">
+                            <p class="text-[15px] text-gray-800 font-bold leading-tight">ตรวจสอบชื่อบัญชี</p>
+                            <p class="text-[13px] text-blue-500 font-bold mt-0.5">ก่อนโอนทุกครั้ง!!</p>
+                        </div>
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-blue-50/50 rounded-full blur-xl"></div>
+                    </div>
+
+                    <!-- Rule 2: Send Slip (SINGLE LINE) -->
+                    <div class="flex items-center gap-3 bg-white p-3.5 rounded-[1.2rem] border-2 border-pink-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div class="flex-shrink-0 w-11 h-11 bg-pink-50 rounded-full flex items-center justify-center text-pink-500 border border-pink-100 relative z-10">
+                            <i data-lucide="receipt" class="w-5 h-5"></i>
+                        </div>
+                        <!-- whitespace-nowrap ensures single line -->
+                        <div class="flex-1 min-w-0 overflow-hidden relative z-10">
+                            <p class="text-[15px] text-gray-800 font-bold leading-tight whitespace-nowrap text-ellipsis pt-1">
+                                โอนแล้วแจ้งสลิปทุกครั้งนะคะ
+                            </p>
+                        </div>
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-pink-50/50 rounded-full blur-xl"></div>
+                    </div>
+
+                    <!-- Rule 3: Strict Company Account Warning -->
+                    <div class="flex items-start gap-3 bg-red-50/80 p-3.5 rounded-[1.2rem] border-2 border-red-200 shadow-sm relative overflow-hidden">
+                        <div class="flex-shrink-0 w-11 h-11 bg-white rounded-full flex items-center justify-center text-red-500 mt-0.5 border-2 border-red-100 relative z-10 shadow-sm">
+                            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                        </div>
+                        <div class="pt-0.5 relative z-10">
+                            <p class="text-[15px] font-bold text-gray-800 leading-tight mb-1">ร้านเกรชโอนเข้าบัญชีบริษัทเท่านั้น</p>
+                            <p class="text-[13px] text-gray-600 font-bold leading-relaxed">
+                                โอนผ่านบัญชีอื่นทางร้านไม่รับผิดชอบทุกกรณี<br>
+                                <span class="text-red-500 font-bold underline decoration-2 underline-offset-2 inline-block mt-1 bg-white px-2 py-0.5 rounded border border-red-100">โปรดระวังมิจฉาชีพ</span>
+                            </p>
+                        </div>
+                        <i data-lucide="alert-triangle" class="absolute -right-4 -bottom-4 w-20 h-20 text-red-100/60 transform rotate-12 z-0"></i>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 bg-white text-gray-800 px-6 py-3 rounded-full flex items-center gap-3 transition-all duration-300 -translate-y-24 opacity-0 z-[100] shadow-[0_10px_25px_rgba(0,0,0,0.1)] border-2 border-green-200">
+        <div class="bg-green-100 p-1.5 rounded-full text-green-600 border border-green-200">
+            <i data-lucide="check" class="w-5 h-5"></i>
+        </div>
+        <span id="toastMessage" class="text-[15px] font-bold tracking-wide">ทำรายการสำเร็จ!</span>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // ----------------------------------------------------
+        // 1. Soft Bubble Cursor 
+        // ----------------------------------------------------
+        let lastMove = 0;
+        const colors = ['#bae6fd', '#fbcfe8', '#fef9c3']; // Pastel Blue, Pink, Yellow
+        
+        window.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastMove < 60) return;
+            lastMove = now;
+            
+            if (Math.random() > 0.6) return;
+
+            const bubble = document.createElement('div');
+            const size = Math.random() * 10 + 5;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            bubble.style.borderRadius = '50%';
+            bubble.style.position = 'fixed';
+            bubble.style.left = (e.clientX - size/2) + 'px';
+            bubble.style.top = (e.clientY - size/2) + 'px';
+            bubble.style.pointerEvents = 'none';
+            bubble.style.zIndex = '9998';
+            bubble.style.opacity = '0.7';
+            bubble.style.animation = 'floatBubble 1.2s ease-out forwards';
+            
+            document.body.appendChild(bubble);
+            setTimeout(() => bubble.remove(), 1200);
+        });
+
+        // ----------------------------------------------------
+        // 2. Elegant 3D Tilt Effect on Bank Card
+        // ----------------------------------------------------
+        const tiltCard = document.getElementById('tiltCard');
+        
+        function handleTilt(e) {
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            
+            const rect = tiltCard.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const percentX = (clientX - centerX) / (rect.width / 2);
+            const percentY = (clientY - centerY) / (rect.height / 2);
+            
+            const rotateX = percentY * -10; 
+            const rotateY = percentX * 10;
+            
+            tiltCard.style.transform = `scale3d(1.02, 1.02, 1.02) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            tiltCard.style.transition = 'transform 0.1s ease-out';
+        }
+
+        function resetTilt() {
+            tiltCard.style.transform = `scale3d(1, 1, 1) rotateX(0deg) rotateY(0deg)`;
+            tiltCard.style.transition = 'transform 0.4s ease-out';
+        }
+
+        tiltCard.addEventListener('mousemove', handleTilt);
+        tiltCard.addEventListener('mouseleave', resetTilt);
+        tiltCard.addEventListener('touchmove', handleTilt, {passive: true});
+        tiltCard.addEventListener('touchend', resetTilt);
+
+        // ----------------------------------------------------
+        // 3. Clean Shape Confetti Pop on Copy/Download
+        // ----------------------------------------------------
+        function spawnShapeConfetti(x, y) {
+            const count = 30; 
+            const shapes = ['50%', '4px']; // Circle, Rounded Square
+            
+            for(let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                const size = Math.random() * 8 + 6;
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+                el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                el.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+                el.style.position = 'fixed';
+                el.style.left = x + 'px';
+                el.style.top = y + 'px';
+                el.style.pointerEvents = 'none';
+                el.style.zIndex = '9999';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 70 + 40; 
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                const rotation = Math.random() * 360;
+                
+                el.style.setProperty('--tx', `${tx}px`);
+                el.style.setProperty('--ty', `${ty}px`);
+                el.style.setProperty('--rot', `${rotation}deg`);
+                el.style.animation = 'popShape 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+                
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 900);
+            }
+        }
+
+        // Action for Download Button
+        function downloadAction(event, btnElement) {
+            // Spawn Confetti
+            const clickX = event.clientX || event.touches?.[0].clientX || window.innerWidth / 2;
+            const clickY = event.clientY || event.touches?.[0].clientY || window.innerHeight / 2;
+            spawnShapeConfetti(clickX, clickY);
+
+            // Change Button Visual
+            const originalHTML = btnElement.innerHTML;
+            btnElement.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-white"></i> <span class="text-white">บันทึกเรียบร้อย!</span>`;
+            
+            btnElement.classList.remove('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
+            btnElement.classList.add('bg-green-400', 'border-green-400');
+            lucide.createIcons();
+
+            // Trigger Toast
+            showToast(`บันทึก QR Code สำเร็จ ✨`);
+
+            // Revert Back
+            setTimeout(() => {
+                btnElement.innerHTML = originalHTML;
+                btnElement.classList.remove('bg-green-400', 'border-green-400');
+                btnElement.classList.add('bg-gradient-to-r', 'from-pink-300', 'to-sky-300', 'hover:from-pink-400', 'hover:to-sky-400');
+                lucide.createIcons();
+            }, 2000);
+        }
+
+        // Toast Notification Logic
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            
+            toast.style.transform = 'translate(-50%, 0) scale(1)';
+            toast.style.opacity = '1';
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.style.transform = 'translate(-50%, -6rem) scale(0.9)';
+                toast.style.opacity = '0';
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
